@@ -50,9 +50,6 @@ final class ApiTokenFactory extends ModelFactory
             'expiresAt' => \DateTimeImmutable::createFromMutable(
                 self::faker()->dateTimeBetween('-20 days', '+20 days')
             ),
-            'token' => function(){
-                return uniqid('apitoken_', true);
-            },
             'user' => UserFactory::random(),
         ];
     }
