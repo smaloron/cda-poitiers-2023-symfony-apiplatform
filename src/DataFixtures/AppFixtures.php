@@ -16,12 +16,21 @@ class AppFixtures extends Fixture
 
         UserFactory::createMany(3);
 
-        ApiTokenFactory::createMany(8);
 
-        ApiTokenFactory::createMany(4, [
-            'expiresAt' => \DateTimeImmutable::createFromMutable(
-                new \DateTime('+10 days')
-            )
-        ]);
+        ApiTokenFactory::createMany(8, function (){
+            return [
+                'token' => uniqid('apitoken_', true)
+            ];
+        });
+
+        ApiTokenFactory::createMany(4, function (){
+            return [
+                'token' => uniqid('apitoken_', true),
+                'expiresAt' => \DateTimeImmutable::createFromMutable(
+                    new \DateTime('+10 days')
+                )
+            ];
+        });
+
     }
 }
