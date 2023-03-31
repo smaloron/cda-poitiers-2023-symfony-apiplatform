@@ -1,0 +1,4 @@
+partial : property LIKE %search%
+start   : property LIKE search%
+end   : property LIKE %search
+word_start : property LIKE search% OR property LIKE % search%

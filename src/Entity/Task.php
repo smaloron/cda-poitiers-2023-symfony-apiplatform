@@ -2,6 +2,10 @@
 
 namespace App\Entity;
 
+
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -13,6 +17,7 @@ use App\Repository\TaskRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 #[ApiResource(
@@ -24,7 +29,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new PATCH(uriTemplate: '/taches/{id}'),
         new DELETE(uriTemplate: '/taches/{id}')
     ],
-    normalizationContext: ['groups' => ['task--show']]
+    paginationItemsPerPage: 10
+)]
+#[ApiFilter(BooleanFilter::class, properties: ['done'])]
+#[ApiFilter(SearchFilter::class,
+    properties: ['taskName' => 'partial']
 )]
 class Task
 {
@@ -34,17 +43,18 @@ class Task
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['task--show'])]
+    #[Assert\Length(min: 3, minMessage: "au moins {{ limit }} caractères")]
     private ?string $taskName = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column]
-    #[Groups(['task--show'])]
+
     private ?bool $done = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+
     private ?\DateTimeInterface $dueAt = null;
 
     public function __construct()
@@ -108,7 +118,7 @@ class Task
         return $this;
     }
 
-    #[Groups(['task--show'])]
+
     public function isNew(){
         $now = new \DateTime();
         $interval = $this->createdAt->diff($now);
