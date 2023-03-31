@@ -22,14 +22,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 #[ApiResource(
     operations: [
-        new GetCollection(uriTemplate: '/taches'),
+        new GetCollection(uriTemplate: '/taches',
+            security: 'is_granted("PUBLIC_ACCESS")'),
         new GET(uriTemplate: '/taches/{id}'),
         new POST(uriTemplate: '/taches'),
         new PUT(uriTemplate: '/taches/{id}'),
         new PATCH(uriTemplate: '/taches/{id}'),
         new DELETE(uriTemplate: '/taches/{id}')
     ],
-    paginationItemsPerPage: 10
+    paginationItemsPerPage: 10,
+    security: 'is_granted("ROLE_USER")'
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['done'])]
 #[ApiFilter(SearchFilter::class,
